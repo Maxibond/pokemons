@@ -11,3 +11,23 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.type {
+  margin-right: 5px;
+}
+
+.type-fire {
+  color: red
+}
+
+.type-poison {
+  color: #5e1c5e;
+}
+
+.type-grass {
+  color: green;
+}
+
+.type-water {
+  color: blue;
+}
