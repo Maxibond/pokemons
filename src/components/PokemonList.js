@@ -8,25 +8,56 @@ class PokemonList extends Component {
 
         this.state = { 
             pokemons: [],
-            next: "",
-            previous: "",
+            offset: 0,
+            limit: 20,
+            count: 0,
         }
+        this.previous = this.previous.bind(this);
+        this.next = this.next.bind(this);
     }
 
     async componentDidMount() {
-        const response = await fetch("https://pokeapi.co/api/v2/pokemon/");
+        this.fetchPokemons();
+    }
+    
+    async fetchPokemons(){
+        const {offset, limit} = this.state;
+        const url = `https://pokeapi.co/api/v2/pokemon/?offset=${offset}&limit=${limit}`;
+        const response = await fetch(url);
         const result = await response.json();
         this.setState({
-            pokemons: result.results
+            pokemons: result.results,
+            count: result.count,
         });
     }
+    
+    next(){
+        const {offset, limit} = this.state;
+        this.setState({
+            offset: offset+limit,
+        },()=>this.fetchPokemons());
+    }
+
+    previous(){
+        const {offset, limit} = this.state;
+        this.setState({
+            offset: offset-limit,
+        },()=>this.fetchPokemons());
+    }
+
 
     render() {
+        const {
+            offset,
+            limit,
+            count,
+            pokemons,
+        } = this.state;
         return (
             <div>
                 <h1>Pokemons</h1> 
                 {
-                    this.state.pokemons.map(p => {
+                    pokemons.map(p => {
                         const pokemonID = getPokemonID(p.url);
                         return (
                             <div key={p.name}>
@@ -35,6 +66,8 @@ class PokemonList extends Component {
                         );
                     })
                 }
+                <button disabled={offset<=0} onClick={this.previous}>Previous</button>
+                <button disabled={offset+limit>count} onClick={this.next}>Next</button>
             </div>
         )
     }
