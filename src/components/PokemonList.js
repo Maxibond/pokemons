@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import { Link } from "react-router-dom";
 
 
 class PokemonList extends Component {
@@ -30,7 +31,7 @@ class PokemonList extends Component {
                         const pokemonID = getPokemonID(p.url);
                         return (
                             <div key={p.name}>
-                                <a href={`/pokemon/${pokemonID}`}>{p.name}</a>
+                                <Link to={`/${pokemonID}`}>{p.name}</Link>
                             </div>
                         );
                     })
