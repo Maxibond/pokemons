@@ -2,16 +2,21 @@ import React, {Component} from "react";
 
 
 class PokemonList extends Component {
-    
+
+    limit = 20;
+
     constructor(props) {
         super(props);
+        const page = localStorage.getItem("pokemons.page");
+        const offset = (page-1)*this.limit;
 
         this.state = { 
             pokemons: [],
-            offset: 0,
-            limit: 20,
+            offset: offset,
+            limit: this.limit,
             count: 0,
         }
+
         this.previous = this.previous.bind(this);
         this.next = this.next.bind(this);
     }
@@ -33,16 +38,20 @@ class PokemonList extends Component {
     
     next(){
         const {offset, limit} = this.state;
+        const newOffset = offset+limit;
         this.setState({
-            offset: offset+limit,
+            offset: newOffset,
         },()=>this.fetchPokemons());
+        localStorage.setItem("pokemons.page", newOffset/limit+1);
     }
 
     previous(){
         const {offset, limit} = this.state;
+        const newOffset = offset-limit;
         this.setState({
-            offset: offset-limit,
+            offset: newOffset,
         },()=>this.fetchPokemons());
+        localStorage.setItem("pokemons.page", newOffset/limit+1);
     }
 
 
