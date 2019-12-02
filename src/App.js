@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
+import { HashRouter, Route, Switch, Link } from "react-router-dom";
 import PokemonList from './components/PokemonList'
 import Pokemon from './components/Pokemon';
 import './App.css';
@@ -7,22 +7,21 @@ import './App.css';
 
 function App() {
   return (
-    <BrowserRouter basename="/pokemons">
+    <HashRouter>
       <div className="App">
 
       <Switch>
-          <Route path="/:id(\d+)" component={Pokemon} />
+          <Route path="/pokemons/:id(\d+)" component={Pokemon} />
 
-          <Route exact path="/">
-            <PokemonList />
-          </Route>
+          <Route exact path="/pokemons" component={PokemonList} />
+          <Route exact path="/" component={PokemonList} />
 
           <Route path="/">
             <h1>Not found sorry man go  <Link to="/">here</Link></h1>
           </Route>
       </Switch>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

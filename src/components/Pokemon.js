@@ -51,7 +51,7 @@ class Pokemon extends Component {
                 } 
                 </p>
 
-                <Link to="/">Back</Link>
+                <Link to="/pokemons">Back</Link>
 
             </div>
         );

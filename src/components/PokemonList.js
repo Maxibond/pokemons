@@ -67,7 +67,7 @@ class PokemonList extends Component {
                         const pokemonID = getPokemonID(p.url);
                         return (
                             <div key={p.name}>
-                                <Link to={`/${pokemonID}`}>{p.name}</Link>
+                                <Link to={`/pokemons/${pokemonID}`}>{p.name}</Link>
                             </div>
                         );
                     })
