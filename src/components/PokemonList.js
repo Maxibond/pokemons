@@ -4,28 +4,32 @@ import React, {Component} from "react";
 class PokemonList extends Component {
 
     limit = 20;
-
+    pageKey = "pokemons.page";
+    
     constructor(props) {
         super(props);
-        const page = localStorage.getItem("pokemons.page");
+
+        const page = localStorage.getItem(this.pageKey) || 1;
+        
+        localStorage.setItem(this.pageKey, page);
+        
         const offset = (page-1)*this.limit;
 
         this.state = { 
             pokemons: [],
-            offset: offset,
+            offset,
             limit: this.limit,
             count: 0,
         }
 
-        this.previous = this.previous.bind(this);
-        this.next = this.next.bind(this);
+        this.paginator = this.paginator.bind(this);
     }
 
     async componentDidMount() {
         this.fetchPokemons();
     }
     
-    async fetchPokemons(){
+    async fetchPokemons() {
         const {offset, limit} = this.state;
         const url = `https://pokeapi.co/api/v2/pokemon/?offset=${offset}&limit=${limit}`;
         const response = await fetch(url);
@@ -36,24 +40,16 @@ class PokemonList extends Component {
         });
     }
     
-    next(){
+    paginator(isNext) {
         const {offset, limit} = this.state;
-        const newOffset = offset+limit;
+
+        const newOffset = isNext ? offset+limit: offset-limit;
+
         this.setState({
             offset: newOffset,
-        },()=>this.fetchPokemons());
-        localStorage.setItem("pokemons.page", newOffset/limit+1);
+        }, () => this.fetchPokemons());
+        localStorage.setItem(this.pageKey, newOffset/limit+1);
     }
-
-    previous(){
-        const {offset, limit} = this.state;
-        const newOffset = offset-limit;
-        this.setState({
-            offset: newOffset,
-        },()=>this.fetchPokemons());
-        localStorage.setItem("pokemons.page", newOffset/limit+1);
-    }
-
 
     render() {
         const {
@@ -75,8 +71,16 @@ class PokemonList extends Component {
                         );
                     })
                 }
-                <button disabled={offset<=0} onClick={this.previous}>Previous</button>
-                <button disabled={offset+limit>count} onClick={this.next}>Next</button>
+                <button disabled={offset<=0} 
+                        onClick={() => this.paginator(false)}
+                        >
+                            Previous
+                </button>
+                <button disabled={offset+limit>count} 
+                        onClick={ () => this.paginator(true)}
+                        >
+                            Next
+                </button>
             </div>
         )
     }
