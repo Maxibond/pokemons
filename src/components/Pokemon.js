@@ -1,16 +1,31 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
-
+import favOff from '../icons/favOff.png';
+import favOn from '../icons/favOn.png'
+import styles from './Pokemon.module.css';
 
 class Pokemon extends Component {
+    
+    favListKey = "pokemons.favoriteList";
 
     constructor(props) {
         super(props);
+        const id = props.match.params.id;
+
+        const favList = JSON.parse(localStorage.getItem(this.favListKey)) || 
+            localStorage.setItem(this.favListKey, "[]") || [];
+        
+        const favorite = favList.filter(f => f.id == id).length != 0;
+
+        console.log(favList);
 
         this.state = {
-            id: props.match.params.id,
-            loading: true
+            id,
+            loading: true,
+            favorite,
         };
+
+        this.toggleFavorite = this.toggleFavorite.bind(this);
     }
 
     async componentDidMount() {
@@ -22,6 +37,25 @@ class Pokemon extends Component {
             ...result,
             loading: false,
         });
+    }
+
+    toggleFavorite() {
+        const newFav = !this.state.favorite;
+        let favList = JSON.parse(localStorage.getItem(this.favListKey));
+
+        this.setState({
+            favorite: newFav,
+        })
+        
+        if (newFav) {
+            favList.push({id: this.state.id, name: this.state.name});
+        }
+        else {
+            favList = favList.filter(f => f.id != this.state.id);
+        }
+
+        localStorage.setItem(this.favListKey, JSON.stringify(favList));
+
     }
 
     render() {
@@ -50,6 +84,8 @@ class Pokemon extends Component {
                     })
                 } 
                 </p>
+
+                <img src={this.state.favorite ? favOn : favOff} onClick={this.toggleFavorite} className={styles.small_icon} ></img><br></br>
 
                 <Link to="/pokemons">Back</Link>
 
