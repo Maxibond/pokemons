@@ -11,7 +11,6 @@ class Pokemon extends Component {
     constructor(props) {
         super(props);
         const id = props.match.params.id;
-
         const favList = JSON.parse(localStorage.getItem(this.favListKey)) || 
             localStorage.setItem(this.favListKey, "[]") || [];
         
@@ -29,7 +28,8 @@ class Pokemon extends Component {
     }
 
     async componentDidMount() {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${this.state.id}`);
+        const url = `https://pokeapi.co/api/v2/pokemon/${this.state.id}`;
+        const response = await fetch(url);
         const result = await response.json();
 
         this.setState({
@@ -70,7 +70,6 @@ class Pokemon extends Component {
         if (this.state.loading) {
             return <h1>loading...</h1>;
         }
-
         return (
             <div>
                 <h1>#{id} {name}</h1>
