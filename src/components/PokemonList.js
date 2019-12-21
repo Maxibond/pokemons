@@ -81,7 +81,7 @@ class PokemonList extends Component {
         return (
             <div>
                 <h1>Pokemons</h1>
-                <button onClick={this.toggleFavOnly}>Only favorite pokemons</button>
+                <button onClick={this.toggleFavOnly}>{favOnly ? "Show all pokemons" : "Show favorite pokemons"}</button>
                 {
                     (favOnly ? favPokemons : pokemons).map(p => {
                         return (
