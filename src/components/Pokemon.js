@@ -14,7 +14,7 @@ class Pokemon extends Component {
         const favList = JSON.parse(localStorage.getItem(this.favListKey)) || 
             localStorage.setItem(this.favListKey, "[]") || [];
         
-        const favorite = favList.filter(f => f.id == id).length != 0;
+        const favorite = favList.filter(f => f.id === id).length !== 0;
 
         console.log(favList);
 
@@ -51,7 +51,7 @@ class Pokemon extends Component {
             favList.push({id: this.state.id, name: this.state.name});
         }
         else {
-            favList = favList.filter(f => f.id != this.state.id);
+            favList = favList.filter(f => f.id !== this.state.id);
         }
 
         localStorage.setItem(this.favListKey, JSON.stringify(favList));
@@ -84,7 +84,7 @@ class Pokemon extends Component {
                 } 
                 </p>
 
-                <img src={this.state.favorite ? favOn : favOff} onClick={this.toggleFavorite} className={styles.small_icon} ></img><br></br>
+                <img src={this.state.favorite ? favOn : favOff} onClick={this.toggleFavorite} className={styles.small_icon} alt="" ></img><br></br>
 
                 <Link to="/pokemons">Back</Link>
 
