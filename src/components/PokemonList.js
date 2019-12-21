@@ -78,6 +78,20 @@ class PokemonList extends Component {
             pokemons,
             favPokemons,
         } = this.state;
+        const navigation = (
+            <div>
+            <button disabled={offset<=0} 
+                onClick={() => this.paginator(false)}
+                >
+                        Previous
+            </button>
+            <button disabled={offset+limit>count} 
+                onClick={ () => this.paginator(true)}
+                >
+                    Next
+            </button>
+            </div>
+        );
         return (
             <div>
                 <h1>Pokemons</h1>
@@ -91,16 +105,7 @@ class PokemonList extends Component {
                         );
                     })
                 }
-                <button disabled={offset<=0} 
-                        onClick={() => this.paginator(false)}
-                        >
-                                Previous
-                </button>
-                <button disabled={offset+limit>count} 
-                        onClick={ () => this.paginator(true)}
-                        >
-                            Next
-                </button>
+                {favOnly ? null : navigation}
             </div>
         )
     }
