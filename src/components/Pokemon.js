@@ -10,13 +10,12 @@ class Pokemon extends Component {
 
     constructor(props) {
         super(props);
-        const id = props.match.params.id;
+        const id = parseInt(props.match.params.id);
         const favList = JSON.parse(localStorage.getItem(this.favListKey)) || 
             localStorage.setItem(this.favListKey, "[]") || [];
         
         const favorite = favList.filter(f => f.id === id).length !== 0;
-
-        console.log(favList);
+        console.log(favList, favorite, id);
 
         this.state = {
             id,
