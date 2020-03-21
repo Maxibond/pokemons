@@ -6,6 +6,9 @@ class PokemonList extends Component {
 
     limit = 20;
     pageKey = "pokemons.page";
+    favKey = "pokemons.favoriteList";
+        
+    favOnly = false;
     
     constructor(props) {
         super(props);
@@ -16,7 +19,11 @@ class PokemonList extends Component {
         
         const offset = (page-1)*this.limit;
 
+        let favList = JSON.parse(localStorage.getItem(this.favKey));
+        
         this.state = { 
+            favOnly: this.favOnly,
+            favPokemons: favList,
             pokemons: [],
             offset,
             limit: this.limit,
@@ -24,6 +31,7 @@ class PokemonList extends Component {
         }
 
         this.paginator = this.paginator.bind(this);
+        this.toggleFavOnly = this.toggleFavOnly.bind(this);
     }
 
     async componentDidMount() {
@@ -35,6 +43,7 @@ class PokemonList extends Component {
         const url = `https://pokeapi.co/api/v2/pokemon/?offset=${offset}&limit=${limit}`;
         const response = await fetch(url);
         const result = await response.json();
+        result.results = result.results.map(p => ({...p, id: getPokemonID(p.url) }));
         this.setState({
             pokemons: result.results,
             count: result.count,
@@ -52,22 +61,32 @@ class PokemonList extends Component {
         localStorage.setItem(this.pageKey, newOffset/limit+1);
     }
 
+    toggleFavOnly() {
+        const newFav = !this.state.favOnly;
+
+        this.setState({
+            favOnly: newFav,
+        })
+    }
+
     render() {
         const {
+            favOnly,
             offset,
             limit,
             count,
             pokemons,
+            favPokemons,
         } = this.state;
         return (
             <div>
-                <h1>Pokemons</h1> 
+                <h1>Pokemons</h1>
+                <button onClick={this.toggleFavOnly}>{favOnly ? "Show all pokemons" : "Show favorite pokemons"}</button>
                 {
-                    pokemons.map(p => {
-                        const pokemonID = getPokemonID(p.url);
+                    (favOnly ? favPokemons : pokemons).map(p => {
                         return (
                             <div key={p.name}>
-                                <Link to={`/pokemons/${pokemonID}`}>{p.name}</Link>
+                                <Link to={`/pokemons/${p.id}`}>{p.name}</Link>
                             </div>
                         );
                     })
@@ -75,7 +94,7 @@ class PokemonList extends Component {
                 <button disabled={offset<=0} 
                         onClick={() => this.paginator(false)}
                         >
-                            Previous
+                                Previous
                 </button>
                 <button disabled={offset+limit>count} 
                         onClick={ () => this.paginator(true)}

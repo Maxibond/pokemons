@@ -1,20 +1,35 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
-
+import favOff from '../icons/favOff.png';
+import favOn from '../icons/favOn.png'
+import styles from './Pokemon.module.css';
 
 class Pokemon extends Component {
+    
+    favListKey = "pokemons.favoriteList";
 
     constructor(props) {
         super(props);
+        const id = props.match.params.id;
+        const favList = JSON.parse(localStorage.getItem(this.favListKey)) || 
+            localStorage.setItem(this.favListKey, "[]") || [];
+        
+        const favorite = favList.filter(f => f.id === id).length !== 0;
+
+        console.log(favList);
 
         this.state = {
-            id: props.match.params.id,
-            loading: true
+            id,
+            loading: true,
+            favorite,
         };
+
+        this.toggleFavorite = this.toggleFavorite.bind(this);
     }
 
     async componentDidMount() {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${this.state.id}`);
+        const url = `https://pokeapi.co/api/v2/pokemon/${this.state.id}`;
+        const response = await fetch(url);
         const result = await response.json();
 
         this.setState({
@@ -22,6 +37,25 @@ class Pokemon extends Component {
             ...result,
             loading: false,
         });
+    }
+
+    toggleFavorite() {
+        const newFav = !this.state.favorite;
+        let favList = JSON.parse(localStorage.getItem(this.favListKey));
+
+        this.setState({
+            favorite: newFav,
+        })
+        
+        if (newFav) {
+            favList.push({id: this.state.id, name: this.state.name});
+        }
+        else {
+            favList = favList.filter(f => f.id !== this.state.id);
+        }
+
+        localStorage.setItem(this.favListKey, JSON.stringify(favList));
+
     }
 
     render() {
@@ -36,7 +70,6 @@ class Pokemon extends Component {
         if (this.state.loading) {
             return <h1>loading...</h1>;
         }
-
         return (
             <div>
                 <h1>#{id} {name}</h1>
@@ -50,6 +83,8 @@ class Pokemon extends Component {
                     })
                 } 
                 </p>
+
+                <img src={this.state.favorite ? favOn : favOff} onClick={this.toggleFavorite} className={styles.small_icon} alt="" ></img><br></br>
 
                 <Link to="/pokemons">Back</Link>
 
