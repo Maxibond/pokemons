@@ -6,7 +6,7 @@ class PokemonList extends Component {
 
     limit = 20;
     pageKey = "pokemons.page";
-    favKey = "pokemons.favoriteList";
+    favListKey = "pokemons.favoriteList";
         
     favOnly = false;
     
@@ -19,7 +19,8 @@ class PokemonList extends Component {
         
         const offset = (page-1)*this.limit;
 
-        let favList = JSON.parse(localStorage.getItem(this.favKey));
+        const favList = JSON.parse(localStorage.getItem(this.favListKey)) || 
+            localStorage.setItem(this.favListKey, "[]") || [];
         
         this.state = { 
             favOnly: this.favOnly,
